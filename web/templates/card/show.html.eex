@@ -1,0 +1,18 @@
+<h2>Show card</h2>
+
+<ul>
+
+  <li>
+    <strong>Event:</strong>
+    <%= @card.event %>
+  </li>
+
+  <li>
+    <strong>Year:</strong>
+    <%= @card.year %>
+  </li>
+
+</ul>
+
+<%= link "Edit", to: card_path(@conn, :edit, @card) %>
+<%= link "Back", to: card_path(@conn, :index) %>

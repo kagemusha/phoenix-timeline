@@ -1,0 +1,6 @@
+<h2>Edit card</h2>
+
+<%= render "form.html", changeset: @changeset,
+                        action: card_path(@conn, :update, @card) %>
+
+<%= link "Back", to: card_path(@conn, :index) %>

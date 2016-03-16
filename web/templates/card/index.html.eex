@@ -1,0 +1,28 @@
+<h2>Listing cards</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Event</th>
+      <th>Year</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for card <- @cards do %>
+    <tr>
+      <td><%= card.event %></td>
+      <td><%= card.year %></td>
+
+      <td class="text-right">
+        <%= link "Show", to: card_path(@conn, :show, card), class: "btn btn-default btn-xs" %>
+        <%= link "Edit", to: card_path(@conn, :edit, card), class: "btn btn-default btn-xs" %>
+        <%= link "Delete", to: card_path(@conn, :delete, card), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<%= link "New card", to: card_path(@conn, :new) %>
