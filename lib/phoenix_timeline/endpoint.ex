@@ -35,5 +35,6 @@ defmodule PhoenixTimeline.Endpoint do
     key: "_phoenix_timeline_key",
     signing_salt: "ZFqjn+7k"
 
+  plug CORSPlug
   plug PhoenixTimeline.Router
 end
