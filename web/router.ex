@@ -11,7 +11,6 @@ defmodule PhoenixTimeline.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
-    resources "/game", GameController, except: [:new, :edit]
   end
 
   scope "/", PhoenixTimeline do
@@ -22,7 +21,8 @@ defmodule PhoenixTimeline.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", PhoenixTimeline do
-  #   pipe_through :api
-  # end
+   scope "/api", PhoenixTimeline do
+     pipe_through :api
+    resources "/cards", Api.CardController, except: [:new, :edit]
+   end
 end
