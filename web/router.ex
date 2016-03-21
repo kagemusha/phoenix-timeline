@@ -23,6 +23,7 @@ defmodule PhoenixTimeline.Router do
   # Other scopes may use custom stacks.
    scope "/api", PhoenixTimeline do
      pipe_through :api
+    resources "/games", Api.GameController, except: [:new, :edit]
     resources "/cards", Api.CardController, except: [:new, :edit]
    end
 end
