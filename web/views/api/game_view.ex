@@ -1,6 +1,8 @@
 defmodule PhoenixTimeline.Api.GameView do
   use PhoenixTimeline.Web, :view
 
+  attributes [:id, :code]
+
   def render("index.json", %{games: games}) do
     %{data: render_many(games, PhoenixTimeline.Api.GameView, "game.json")}
   end

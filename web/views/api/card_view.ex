@@ -1,5 +1,6 @@
 defmodule PhoenixTimeline.Api.CardView do
   use PhoenixTimeline.Web, :view
+  attributes [:id, :event, :year]
 
   def render("index.json", %{cards: cards}) do
     %{data: render_many(cards, PhoenixTimeline.Api.CardView, "card.json")}

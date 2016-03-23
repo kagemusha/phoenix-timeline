@@ -3,47 +3,51 @@ defmodule PhoenixTimeline.Api.GameController do
 
   alias PhoenixTimeline.Game
 
-  plug :scrub_params, "game" when action in [:create, :update]
+  #plug :scrub_params, "game" when action in [:create, :update]
 
-  def index(conn, _params) do
-    games = Repo.all(Game)
-    render(conn, "index.json", games: games)
+  def index(conn, %{"code" => code}) do
+    game = Repo.get_by(Game, code: code)
+    render(conn, data: game)
   end
 
-  def create(conn, %{"game" => game_params}) do
-    changeset = Game.changeset(%Game{}, game_params)
+  def show(conn, %{"id" => id}) do
+    game = Repo.get!(Game, id)
+    render(conn, data: game)
+  end
+
+  def create(conn, %{"data" => %{"attributes" => attrs}}) do
+    changeset = Game.changeset(%Game{}, attrs)
 
     case Repo.insert(changeset) do
       {:ok, game} ->
         conn
         |> put_status(:created)
-        |> put_resp_header("location", game_path(conn, :show, game))
-        |> render("show.json", game: game)
+        |> render(:show, data: game)
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
-        |> render(PhoenixTimeline.ChangesetView, "error.json", changeset: changeset)
+        |> render(:errors, data: changeset)
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    game = Repo.get!(Game, id)
-    render(conn, "show.json", game: game)
+  def requestJoinGame do
+    #tell game creator someone has joined
+    # Endpoint.broadcast
   end
 
-  def update(conn, %{"id" => id, "game" => game_params}) do
-    game = Repo.get!(Game, id)
-    changeset = Game.changeset(game, game_params)
-
-    case Repo.update(changeset) do
-      {:ok, game} ->
-        render(conn, "show.json", game: game)
-      {:error, changeset} ->
-        conn
-        |> put_status(:unprocessable_entity)
-        |> render(PhoenixTimeline.ChangesetView, "error.json", changeset: changeset)
-    end
-  end
+#  def update(conn, %{"id" => id, "game" => game_params}) do
+#    game = Repo.get!(Game, id)
+#    changeset = Game.changeset(game, game_params)
+#
+#    case Repo.update(changeset) do
+#      {:ok, game} ->
+#        render(conn, "show.json", game: game)
+#      {:error, changeset} ->
+#        conn
+#        |> put_status(:unprocessable_entity)
+#        |> render(PhoenixTimeline.ChangesetView, "error.json", changeset: changeset)
+#    end
+#  end
 
   def delete(conn, %{"id" => id}) do
     game = Repo.get!(Game, id)
