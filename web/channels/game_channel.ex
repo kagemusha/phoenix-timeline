@@ -10,4 +10,14 @@ defmodule PhoenixTimeline.GameChannel do
     {:ok, socket}
   end
 
+  def handle_in("start-game", params, socket) do
+    IO.puts "start-game REceived"
+    broadcast! socket, "game-started", %{}
+    {:reply, :ok, socket}
+  end
+
+  def handle_in(event, params, socket) do
+    IO.puts "Event REceived: #{inspect(event)}"
+    {:reply, :ok, socket}
+  end
 end
