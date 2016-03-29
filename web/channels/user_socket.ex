@@ -2,7 +2,7 @@ defmodule PhoenixTimeline.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "rooms:*", PhoenixTimeline.RoomChannel
+  channel "game:*", PhoenixTimeline.GameChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
