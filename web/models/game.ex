@@ -1,14 +1,17 @@
 defmodule PhoenixTimeline.Game do
   use PhoenixTimeline.Web, :model
 
-  schema "game" do
+  schema "games" do
     field :code, :string
-
+    field :status, :string
+    belongs_to :creator, PhoenixTimeline.Player
+    belongs_to :winner, PhoenixTimeline.Player
+    has_many :players, PhoenixTimeline.Player
     timestamps
   end
 
   @required_fields ~w(code)
-  @optional_fields ~w()
+  @optional_fields ~w(status)
 
   @doc """
   Creates a changeset based on the `model` and `params`.
