@@ -18,28 +18,22 @@ defmodule PhoenixTimeline.Api.GameController do
 
   def create(conn, %{
       "data" => %{"attributes" => %{"code" => code},
-      "creator"=> %{"data"=> %{"attributes" => creator_attrs}}}
-   }) do
-    creator_changes = Player.changeset(%Player{}, creator_attrs)
+      "creator"=> %{"data"=> %{"attributes" => %{"name"=>name}}}} }) do
 
-    case Repo.insert(creator_changes) do
-      {:ok, creator} ->
-        game_params = %{code: code, status: "not_started"}
-        # this really should be atomic with game creation, but waiting
-        # on ecto 2.0 where better assoc support expected
-        game_changes = Ecto.build_assoc(creator, :created_game, game_params)
-        game = Repo.insert!(game_changes)
-        add_creator_as_player = Ecto.build_assoc(game, :players, Map.from_struct(creator))
-        game = Repo.update!(add_creator_as_player)
+    game_params = %Game{code: code, status: "not_started"}
+    creator = Repo.insert!(game_params)
+            |> build_assoc(:players, %{name: name})
+            |> Repo.insert!
 
-        conn
-        |> put_status(:created)
-        |> render(:show, data: game)
-      {:error, changeset} ->
-        conn
-        |> put_status(:unprocessable_entity)
-        |> render(:errors, data: changeset)
-    end
+    creator = Repo.preload(creator, :game)
+    game = creator.game
+
+    Ecto.build_assoc(creator, :created_game, Map.from_struct(game))
+    |> Repo.update!
+
+    conn
+    |> put_status(:created)
+    |> render(:show, data: game)
   end
 
   def requestJoinGame do
