@@ -3,17 +3,13 @@ defmodule PhoenixTimeline.Api.GameView do
 
   attributes [:id, :code]
 
-  def render("index.json", %{games: games}) do
-    %{data: render_many(games, PhoenixTimeline.Api.GameView, "game.json")}
-  end
+  has_many :players,
+    links: [
+      related: "/games/:id/players",
+      self: "/games/:id/relationships/players"
+    ]
 
-  def render("show.json", %{game: game}) do
-    %{data: render_one(game, PhoenixTimeline.Api.GameView, "game.json")}
-  end
-
-  def render("game.json", %{game: game}) do
-    %{id: game.id,
-      code: game.code
-     }
-  end
+   def games(player, _conn) do
+     Game.for_player(player)
+   end
 end
