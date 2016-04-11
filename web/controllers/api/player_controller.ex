@@ -19,7 +19,7 @@ defmodule PhoenixTimeline.Api.PlayerController do
         conn
         |> put_status(:created)
         |> render("show.json", data: player)
-      {:error, changeset} ->
+      {:error, _changeset} ->
         IO.puts "ERROR SAVING PLAYER"
     end
 

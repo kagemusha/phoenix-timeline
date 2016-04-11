@@ -5,5 +5,5 @@ defmodule PhoenixTimeline.Api.PlayerView do
 
   has_one :game,
     serializer: PhoenixTimeline.Api.GameView,
-    include: true #,
+    include: true
 end

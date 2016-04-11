@@ -4,12 +4,14 @@ defmodule PhoenixTimeline.Api.GameView do
   attributes [:id, :code]
 
   has_many :players,
-    links: [
-      related: "/games/:id/players",
-      self: "/games/:id/relationships/players"
-    ]
+    serializer: PhoenixTimeline.Api.PlayerView,
+    include: true
 
-   def games(player, _conn) do
-     Game.for_player(player)
-   end
+  has_one :creator,
+    serializer: PhoenixTimeline.Api.PlayerView,
+    include: true
+
+#   def games(player, _conn) do
+#     Game.for_player(player)
+#   end
 end

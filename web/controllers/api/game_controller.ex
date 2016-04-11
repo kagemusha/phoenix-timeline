@@ -21,13 +21,15 @@ defmodule PhoenixTimeline.Api.GameController do
       "creator"=> %{"data"=> %{"attributes" => %{"name"=>name}}}} }) do
 
     game_params = %Game{code: code, status: "not_started"}
-    creator = Repo.insert!(game_params)             #create game with player as creator
-            |> build_assoc(:players, %{name: name})
-            |> Repo.insert!                         #add creator as player
+    game = Repo.insert!(game_params)             #create game with player as creator
+    creator = Repo.insert!(%Player{name: name, game_id: game.id})
+#    require IEx; IEx.pry
+    changeset = build_assoc(game, :creator, creator)
+    Repo.update! changeset
 
-    creator = Repo.preload(creator, :game)
-    game = creator.game
-
+    game = Repo.preload(game, :creator)
+          |> Repo.preload(:players)
+    require IEx; IEx.pry
     conn
     |> put_status(:created)
     |> render(:show, data: game)
