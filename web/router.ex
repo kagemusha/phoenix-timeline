@@ -10,9 +10,7 @@ defmodule PhoenixTimeline.Router do
   end
 
   pipeline :api do
-    plug :accepts, ["json-api"]
-    plug JaSerializer.ContentTypeNegotiation
-    plug JaSerializer.Deserializer
+    plug :accepts, ["json"]
   end
 
   scope "/", PhoenixTimeline do
