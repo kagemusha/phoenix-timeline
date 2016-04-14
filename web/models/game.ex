@@ -4,8 +4,6 @@ defmodule PhoenixTimeline.Game do
   schema "games" do
     field :code, :string
     field :status, :string
-    belongs_to :creator, PhoenixTimeline.Player
-    belongs_to :winner, PhoenixTimeline.Player
     has_many :players, PhoenixTimeline.Player
     timestamps
   end

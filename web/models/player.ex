@@ -6,6 +6,8 @@ defmodule PhoenixTimeline.Player do
     field :total_cards, :integer
     field :cards_remaining, :integer
     field :turn_position, :integer
+    field :is_creator, :boolean
+    field :is_winner, :boolean
     has_one :victory, PhoenixTimeline.Game, foreign_key: :winner_id
     has_one :created_game, PhoenixTimeline.Game, foreign_key: :creator_id
 
@@ -15,7 +17,7 @@ defmodule PhoenixTimeline.Player do
   end
 
   @required_fields ~w(name)
-  @optional_fields ~w(total_cards cards_remaining turn_position)
+  @optional_fields ~w(total_cards cards_remaining turn_position is_creator is_winner)
 
   @doc """
   Creates a changeset based on the `model` and `params`.
