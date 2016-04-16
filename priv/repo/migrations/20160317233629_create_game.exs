@@ -3,6 +3,7 @@ defmodule PhoenixTimeline.Repo.Migrations.CreateGame do
 
   def change do
     create table(:games) do
+      add :name, :string
       add :code, :string, null: false
       add :status, :string, default: "waiting-to-start"
       timestamps

@@ -6,7 +6,7 @@ defmodule PhoenixTimeline.Api.PlayerController do
 
   #plug :scrub_params, "game" when action in [:create, :update]
 
-  def create(conn, %{ "data" => %{"attributes" => %{"name" => name, "game_code" => game_code}} }) do
+  def create(conn, %{ "player" => %{"name" => name, "game_code" => game_code} }) do
 
     game = Repo.get_by Game, code: game_code
     changeset =
@@ -18,7 +18,7 @@ defmodule PhoenixTimeline.Api.PlayerController do
         player = Repo.preload player, :game
         conn
         |> put_status(:created)
-        |> render("show.json", data: player)
+        |> render("player.json", %{player: player})
       {:error, _changeset} ->
         IO.puts "ERROR SAVING PLAYER"
     end

@@ -17,18 +17,19 @@ defmodule PhoenixTimeline.Api.GameController do
   end
 
   def create(conn, %{
-      "data" => %{"attributes" => %{"code" => code},
-      "players"=> [%{"data"=> %{"attributes" => %{"name"=>name}}}]} }) do
+        "game" => %{"code" => code, "players" => [%{"game" => nil, "name" => player_name}]}
+      }) do
 
     game_params = %Game{code: code, status: "not_started"}
     game = Repo.insert!(game_params)             #create game with player as creator
-    Repo.insert!(%Player{name: name, game_id: game.id, is_creator: true, cards_remaining: 10, total_cards: 10})
+    Repo.insert!(%Player{name: player_name, game_id: game.id,
+    is_creator: true, cards_remaining: 10, total_cards: 10})
 #    require IEx; IEx.pry
 
     game = Repo.preload(game, :players)
     conn
     |> put_status(:created)
-    |> render(:show, data: game)
+    |> render("created_game.json", %{game: game})
   end
 
   def requestJoinGame do
@@ -36,19 +37,6 @@ defmodule PhoenixTimeline.Api.GameController do
     # Endpoint.broadcast
   end
 
-#  def update(conn, %{"id" => id, "game" => game_params}) do
-#    game = Repo.get!(Game, id)
-#    changeset = Game.changeset(game, game_params)
-#
-#    case Repo.update(changeset) do
-#      {:ok, game} ->
-#        render(conn, "show.json", game: game)
-#      {:error, changeset} ->
-#        conn
-#        |> put_status(:unprocessable_entity)
-#        |> render(PhoenixTimeline.ChangesetView, "error.json", changeset: changeset)
-#    end
-#  end
 
   def delete(conn, %{"id" => id}) do
     game = Repo.get!(Game, id)

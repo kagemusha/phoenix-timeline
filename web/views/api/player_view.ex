@@ -1,9 +1,19 @@
 defmodule PhoenixTimeline.Api.PlayerView do
   use PhoenixTimeline.Web, :view
 
-  attributes [:id, :name, :is_creator, :is_winner, :total_cards, :cards_remaining]
+  def render("player.json", %{player: player}) do
+    game = player.game
+    %{player:
+      %{
+        id: player.id,
+        name: player.name,
+        game: %{
+          id: game.id,
+          name: game.name,
+          code: game.code
+        }
+      }
+    }
+  end
 
-#  has_one :game,
-#    serializer: PhoenixTimeline.Api.GameView,
-#    include: true
 end

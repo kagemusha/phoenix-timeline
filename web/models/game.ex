@@ -2,6 +2,7 @@ defmodule PhoenixTimeline.Game do
   use PhoenixTimeline.Web, :model
 
   schema "games" do
+    field :name, :string
     field :code, :string
     field :status, :string
     has_many :players, PhoenixTimeline.Player
