@@ -18,7 +18,7 @@ defmodule PhoenixTimeline.Api.PlayerController do
         player = Repo.preload player, :game
         conn
         |> put_status(:created)
-        |> render("player.json", %{player: player})
+        |> render("player_with_game.json", %{player: player})
       {:error, _changeset} ->
         IO.puts "ERROR SAVING PLAYER"
     end

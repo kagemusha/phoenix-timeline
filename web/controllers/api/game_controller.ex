@@ -11,11 +11,6 @@ defmodule PhoenixTimeline.Api.GameController do
     render(conn, data: game)
   end
 
-  def show(conn, %{"id" => id}) do
-    game = Repo.get!(Game, id)
-    render(conn, data: game)
-  end
-
   def create(conn, %{
         "game" => %{"code" => code, "players" => [%{"game" => nil, "name" => player_name}]}
       }) do
@@ -24,7 +19,6 @@ defmodule PhoenixTimeline.Api.GameController do
     game = Repo.insert!(game_params)             #create game with player as creator
     Repo.insert!(%Player{name: player_name, game_id: game.id,
     is_creator: true, cards_remaining: 10, total_cards: 10})
-#    require IEx; IEx.pry
 
     game = Repo.preload(game, :players)
     conn
@@ -32,17 +26,8 @@ defmodule PhoenixTimeline.Api.GameController do
     |> render("created_game.json", %{game: game})
   end
 
-  def requestJoinGame do
-    #tell game creator someone has joined
-    # Endpoint.broadcast
-  end
-
-
   def delete(conn, %{"id" => id}) do
     game = Repo.get!(Game, id)
-
-    # Here we use delete! (with a bang) because we expect
-    # it to always work (and if it does not, it will raise).
     Repo.delete!(game)
 
     send_resp(conn, :no_content, "")

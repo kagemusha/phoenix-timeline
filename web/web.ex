@@ -52,6 +52,7 @@ defmodule PhoenixTimeline.Web do
       import PhoenixTimeline.Router.Helpers
       import PhoenixTimeline.ErrorHelpers
       import PhoenixTimeline.Gettext
+      alias PhoenixTimeline.Repo
     end
   end
 
@@ -69,6 +70,7 @@ defmodule PhoenixTimeline.Web do
       import Ecto
       import Ecto.Query, only: [from: 1, from: 2]
       import PhoenixTimeline.Gettext
+      use Phoenix.View, root: "web/templates"
     end
   end
 
