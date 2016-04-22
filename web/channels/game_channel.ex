@@ -11,10 +11,11 @@ defmodule PhoenixTimeline.GameChannel do
   end
 
   def handle_in("start-game", params, socket) do
+    # check if game already started
     game = socket.assigns.game
             |> Game.start
 
-    broadcast! socket, "game-started", Game.current_turn(game)
+    broadcast! socket, "game-started", Game.current_turn(game, true)
     {:reply, :ok, socket}
   end
 

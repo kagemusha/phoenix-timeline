@@ -42,15 +42,21 @@ defmodule PhoenixTimeline.Game do
     game
   end
 
-  def current_turn(game) do
+  def get_card_at(game, count) do
+    card_id = Enum.at(game.card_order, count)
+    Repo.get Card, card_id
+  end
+
+  def current_turn(game, correct_answer) do
     game = Repo.preload game, :players
     player_index = rem(game.turn_count, Enum.count(game.players))
     current_player = Enum.at(game.players, player_index)
-    card_id = Enum.at(game.card_order, game.turn_count)
-    current_card = Repo.get Card, card_id
-    require IEx; IEx.pry
+    current_card = get_card_at(game, game.turn_count)
+    last_card = if correct_answer, do: get_card_at(game, game.turn_count - 1), else: nil
     %{count: game.turn_count,
       current_player: current_player.id,
+      #last_card will be previous card if correct or the first card for board
+      last_card: %{card: %{event: last_card.event, year: last_card.year}},
       current_card: %{card: %{event: current_card.event}}
     }
 
