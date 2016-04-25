@@ -8,6 +8,7 @@ defmodule PhoenixTimeline.Repo.Migrations.CreateGame do
       add :status, :string, default: "waiting-to-start"
       add :card_order, {:array, :integer}
       add :player_order, {:array, :integer}
+      add :timeline, {:array, :integer}
       add :turn_count, :integer
       timestamps
     end

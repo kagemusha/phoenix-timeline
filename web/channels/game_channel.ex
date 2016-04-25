@@ -11,24 +11,37 @@ defmodule PhoenixTimeline.GameChannel do
   end
 
   def handle_in("start-game", params, socket) do
+    IO.puts "MESSAGE: start-game"
     # check if game already started
-    game = socket.assigns.game
+    game = socket.assigns.game_id
             |> Game.start
 
-    broadcast! socket, "game-started", Game.current_turn(game, true)
+    IO.puts "BRC: start-game"
+    broadcast! socket, "game-started", Game.next_turn(game.id, true)
+    {:reply, :ok, socket}
+  end
+
+  def handle_in("place-card", params, socket) do
+    %{"position"=> position} = params
+    game = socket.assigns.game_id
+    IO.puts "BRC: turn-result"
+    broadcast! socket, "turn-result", Game.card_placed(game, position)
+    {:reply, :ok, socket}
+  end
+
+  def handle_in(event, params, socket) do
+    IO.puts "MESSAGE RECEIVED event: #{event}"
     {:reply, :ok, socket}
   end
 
   def handle_info({:after_join, %{game_id: game_id}}, socket) do
     game_id = String.to_integer(game_id)
     game = Repo.get!(Game, game_id)
-    socket = assign(socket, :game, game)
+    socket = assign(socket, :game_id, game_id)
     players = View.render(GameView, "players.json", %{game: game} )
+    IO.puts "BRC: added-player"
     broadcast! socket, "added-player", players
     {:noreply, socket}
   end
 
-  def handle_in(event, params, socket) do
-    {:reply, :ok, socket}
-  end
 end
