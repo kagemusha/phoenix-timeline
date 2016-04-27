@@ -9,6 +9,7 @@ defmodule PhoenixTimeline.Api.GameView do
         code: game.code,
         players: [%{
                     id: player.id,
+                    token: player.token,
                     name: player.name,
                     is_creator: true,
                     cards_remaining: player.cards_remaining,

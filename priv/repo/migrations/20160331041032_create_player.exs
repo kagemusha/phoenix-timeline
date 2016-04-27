@@ -9,6 +9,7 @@ defmodule PhoenixTimeline.Repo.Migrations.CreatePlayer do
       add :turn_position, :integer
       add :is_creator, :boolean
       add :is_winner, :boolean
+      add :token, :string
       add :game_id, references(:games, on_delete: :nothing)
 
       timestamps

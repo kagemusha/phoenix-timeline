@@ -9,9 +9,10 @@ defmodule PhoenixTimeline.Api.PlayerController do
   def create(conn, %{ "player" => %{"name" => name, "game_code" => game_code} }) do
 
     game = Repo.get_by Game, code: game_code
+    token = Phoenix.Token.sign conn, "something salty", "#{name}-#{game_code}"
     changeset =
       build_assoc(game, :players)
-      |> Player.changeset(%{name: name})
+      |> Player.changeset(%{name: name, token: token})
 
     case Repo.insert(changeset) do
       {:ok, player} ->

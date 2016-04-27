@@ -3,6 +3,7 @@ defmodule PhoenixTimeline.Player do
 
   schema "players" do
     field :name, :string
+    field :token, :string
     field :total_cards, :integer
     field :cards_remaining, :integer
     field :turn_position, :integer
@@ -17,7 +18,7 @@ defmodule PhoenixTimeline.Player do
   end
 
   @required_fields ~w(name)
-  @optional_fields ~w(total_cards cards_remaining turn_position is_creator is_winner)
+  @optional_fields ~w(total_cards cards_remaining turn_position is_creator is_winner token)
 
   @doc """
   Creates a changeset based on the `model` and `params`.
