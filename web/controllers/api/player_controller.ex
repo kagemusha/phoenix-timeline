@@ -5,6 +5,12 @@ defmodule PhoenixTimeline.Api.PlayerController do
   alias PhoenixTimeline.Player
 
   #plug :scrub_params, "game" when action in [:create, :update]
+  def index(conn, %{"token"=> token}) do
+    player = Repo.get_by( Player, token: token)
+             |> Repo.preload :game
+    conn
+    |> render("player_with_game.json", %{player: player})
+  end
 
   def create(conn, %{ "player" => %{"name" => name, "game_code" => game_code} }) do
 

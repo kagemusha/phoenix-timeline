@@ -24,7 +24,7 @@ defmodule PhoenixTimeline.Router do
    scope "/api", PhoenixTimeline do
      pipe_through :api
     resources "/games", Api.GameController, except: [:new, :edit]
-    resources "/players", Api.PlayerController, only: [:create, :delete]
+    resources "/players", Api.PlayerController, except: [:new, :edit]
     resources "/cards", Api.CardController, except: [:new, :edit]
    end
 end
