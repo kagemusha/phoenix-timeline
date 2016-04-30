@@ -5,14 +5,33 @@ It runs in tandem with its [companion Ember.js client](https://github.com/kagemu
 
 ## Running the App
 
-  * (you need to have [Postgres](http://www.postgresql.org/) installed)
+  1. Install Postgres
+  
+     See the [Postgres Installation Guide](https://wiki.postgresql.org/wiki/Detailed_installation_guides). If you're on 
+     Mac, [Postgress.app](http://postgresapp.com/) is another easy option.
 
-  * Install dependencies with `mix deps.get`
-  * Create and migrate your database with `mix ecto.create && mix ecto.migrate`
-  * Install Node.js dependencies with `npm install`
-  * Start Phoenix endpoint with `mix phoenix.server`
+     The default database configuration in `config/dev.exs` should work (username of `postgres`, password 
+     shouldn't matter).  
+     
+     If you want to create a new user (role), use the command:
+     
+         > createuser -d someUserName --pwprompt
+         
+     the `-d` option gives this role database create rights and you will be prompted for a password.  After the role has been created, edit the database `username` and `password` fields in `config/dev.exs file`
+     
+  2.  Install dependencies 
+  
+          phoenix-timeline> mix deps.get
 
-  * Start the [Ember client](https://github.com/kagemusha/timeline)
+  3.  Create and migrate your database
+  
+          phoenix-timeline> mix ecto.create && mix ecto.migrate
+  
+  4.  Start the server 
+  
+          phoenix-timeline> mix phoenix.server
+
+  5.  Install and start the [Timeline Ember client](https://github.com/kagemusha/timeline) as instructed there
 
 ## Learn more
 
