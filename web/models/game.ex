@@ -91,7 +91,7 @@ defmodule PhoenixTimeline.Game do
 
   defp game_with_players(game_id) do
     Repo.get!(Game, game_id)
-    |> Repo.preload :players
+    |> Repo.preload(:players)
   end
 
   defp placement_correct(position, game) do
