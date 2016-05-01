@@ -1,5 +1,6 @@
 defmodule PhoenixTimeline.Player do
   use PhoenixTimeline.Web, :model
+  alias PhoenixTimeline.Repo
 
   schema "players" do
     field :name, :string
@@ -26,6 +27,14 @@ defmodule PhoenixTimeline.Player do
   If no params are provided, an invalid changeset is returned
   with no validation performed.
   """
+  def create(conn, game, name, is_creator \\ false) do
+    token = Phoenix.Token.sign conn, "something salty", "#{name}-#{game.code}"
+    changeset =
+      build_assoc(game, :players)
+      |> changeset(%{name: name, token: token, is_creator: is_creator, cards_remaining: 10, total_cards: 10})
+    Repo.insert(changeset)
+  end
+
   def changeset(model, params \\ :empty) do
     model
     |> cast(params, @required_fields, @optional_fields)

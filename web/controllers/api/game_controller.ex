@@ -17,9 +17,8 @@ defmodule PhoenixTimeline.Api.GameController do
 
     game_params = %Game{code: code, status: "not_started"}
     game = Repo.insert!(game_params)             #create game with player as creator
-    token = Phoenix.Token.sign conn, "something salty", "#{player_name}-#{code}"
-    Repo.insert!(%Player{name: player_name, game_id: game.id, token: token,
-    is_creator: true, cards_remaining: 10, total_cards: 10})
+
+    Player.create(conn, game, player_name, true)
 
     game = Repo.preload(game, :players)
     conn
