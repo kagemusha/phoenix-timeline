@@ -70,7 +70,7 @@ defmodule PhoenixTimeline.Game do
 #      turn = %{game_id: game.id, card_id: last_card.id}
 #      {:ok, turn} = Repo.update Turn.changeset(%{}, turn)
     end
-    %{count: game.turn_count,
+    %{turn_count: game.turn_count,
       correct: correct_answer,
       current_player: current_player.id,
       last_card: last_card_json,
