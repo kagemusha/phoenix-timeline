@@ -43,13 +43,18 @@ defmodule PhoenixTimeline.Game do
   end
 
   def card_placed(game_id, position) do
-    game = Repo.get! Game, game_id
+    game = game_with_players(game_id)
     [correct, card_year] = placement_correct(position, game)
 
     game_updates = %{turn_count: game.turn_count + 1}
     if correct do
       new_timeline = List.insert_at game.timeline, position+1, card_year
       game_updates = Map.put game_updates, :timeline, new_timeline
+      current_player = current_player(game)
+
+      player_updates = %{cards_remaining: (current_player.cards_remaining - 1) }
+      {:ok, current_player} = cast(current_player, player_updates, ~w(cards_remaining))
+                              |> Repo.update
     end
 
     {:ok, game} = cast(game, game_updates, ~w(card_order player_order turn_count status timeline))
@@ -58,15 +63,23 @@ defmodule PhoenixTimeline.Game do
   end
 
   def next_turn(game_id, correct_answer) do
+    #update current_player with new cards_remaining
+    #update game.current_player to be next
+
     game = game_with_players game_id
-    player_index = rem(game.turn_count, Enum.count(game.players))
-    current_player = Enum.at(game.players, player_index)
+
+    current_player = current_player(game)
     current_card = get_card_at(game.card_order, game.turn_count)
 
     last_card_json = nil
+    winnerId = nil
     if correct_answer do
       last_card = get_card_at(game.card_order, game.turn_count - 1)
       last_card_json = %{card: %{id: last_card.id, event: last_card.event, year: last_card.year}}
+      last_player = player_at_turn(game, game.turn_count - 1)
+      if last_player.cards_remaining == 0 do
+        winnerId = last_player.id
+      end
 #      turn = %{game_id: game.id, card_id: last_card.id}
 #      {:ok, turn} = Repo.update Turn.changeset(%{}, turn)
     end
@@ -74,8 +87,18 @@ defmodule PhoenixTimeline.Game do
       correct: correct_answer,
       current_player: current_player.id,
       last_card: last_card_json,
-      current_card: %{card: %{id: current_card.id, event: current_card.event}}
+      current_card: %{card: %{id: current_card.id, event: current_card.event}},
+      winner_id: winnerId
     }
+  end
+
+  def current_player(game) do
+    player_at_turn game, game.turn_count
+  end
+
+  defp player_at_turn(game, turn) do
+    player_index = rem(turn, Enum.count(game.players))
+    Enum.at(game.players, player_index)
   end
 
   defp get_card_at(card_order, count) do

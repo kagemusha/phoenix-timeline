@@ -29,9 +29,10 @@ defmodule PhoenixTimeline.Player do
   """
   def create(conn, game, name, is_creator \\ false) do
     token = Phoenix.Token.sign conn, "something salty", "#{name}-#{game.code}"
+    initial_cards = 2
     changeset =
       build_assoc(game, :players)
-      |> changeset(%{name: name, token: token, is_creator: is_creator, cards_remaining: 10, total_cards: 10})
+      |> changeset(%{name: name, token: token, is_creator: is_creator, cards_remaining: initial_cards, total_cards: initial_cards})
     Repo.insert(changeset)
   end
 
