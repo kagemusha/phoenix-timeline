@@ -5,10 +5,6 @@ defmodule PhoenixTimeline.Mixfile do
     [app: :phoenix_timeline,
      version: "0.0.1",
      elixir: "~> 1.0",
-     build_path: "./_build",
-     config_path: "./config/config.exs",
-     deps_path: "./deps",
-     lockfile: "./mix.lock",
      elixirc_paths: elixirc_paths(Mix.env),
      compilers: [:phoenix, :gettext] ++ Mix.compilers,
      build_embedded: Mix.env == :prod,
@@ -35,6 +31,7 @@ defmodule PhoenixTimeline.Mixfile do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+     {:phoenix, "~> 1.1.4"},
      {:postgrex, ">= 0.0.0"},
      {:phoenix_ecto, "~> 2.0"},
      {:phoenix_html, "~> 2.4"},
