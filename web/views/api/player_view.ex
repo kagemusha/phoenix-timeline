@@ -10,6 +10,10 @@ defmodule PhoenixTimeline.Api.PlayerView do
         name: player.name,
         token: player.token,
         game: game.id,
+        is_creator: player.is_creator,
+        cards_remaining: player.cards_remaining,
+        total_cards: player.total_cards
+
       },
       game: [%{
         id: game.id,
