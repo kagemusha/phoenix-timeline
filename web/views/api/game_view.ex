@@ -13,7 +13,6 @@ defmodule PhoenixTimeline.Api.GameView do
                     name: player.name,
                     is_creator: true,
                     cards_remaining: player.cards_remaining,
-                    total_cards: player.total_cards
         }]
       }
     }
@@ -27,7 +26,6 @@ defmodule PhoenixTimeline.Api.GameView do
           name: player.name,
           is_creator: player.is_creator,
           cards_remaining: player.cards_remaining,
-          total_cards: player.total_cards,
           game: game.id
         }
       end

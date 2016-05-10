@@ -9,6 +9,7 @@ defmodule PhoenixTimeline.Game do
     field :name, :string
     field :code, :string
     field :status, :string
+    field :initial_card_count, :integer
     field :card_order, {:array, :integer}
     field :turn_count, :integer
     field :player_order, {:array, :integer}

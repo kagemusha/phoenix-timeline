@@ -5,7 +5,6 @@ defmodule PhoenixTimeline.Player do
   schema "players" do
     field :name, :string
     field :token, :string
-    field :total_cards, :integer
     field :cards_remaining, :integer
     field :turn_position, :integer
     field :is_creator, :boolean
@@ -19,7 +18,7 @@ defmodule PhoenixTimeline.Player do
   end
 
   @required_fields ~w(name)
-  @optional_fields ~w(total_cards cards_remaining turn_position is_creator is_winner token)
+  @optional_fields ~w(cards_remaining turn_position is_creator is_winner token)
 
   @doc """
   Creates a changeset based on the `model` and `params`.
@@ -29,10 +28,9 @@ defmodule PhoenixTimeline.Player do
   """
   def create(conn, game, name, is_creator \\ false) do
     token = Phoenix.Token.sign conn, "something salty", "#{name}-#{game.code}"
-    initial_cards = 2
     changeset =
       build_assoc(game, :players)
-      |> changeset(%{name: name, token: token, is_creator: is_creator, cards_remaining: initial_cards, total_cards: initial_cards})
+      |> changeset(%{name: name, token: token, is_creator: is_creator, cards_remaining: game.initial_card_count })
     Repo.insert(changeset)
   end
 

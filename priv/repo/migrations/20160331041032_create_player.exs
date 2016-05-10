@@ -4,7 +4,6 @@ defmodule PhoenixTimeline.Repo.Migrations.CreatePlayer do
   def change do
     create table(:players) do
       add :name, :string
-      add :total_cards, :integer
       add :cards_remaining, :integer
       add :turn_position, :integer
       add :is_creator, :boolean
