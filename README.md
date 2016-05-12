@@ -3,6 +3,10 @@
 This is the server component of an implementation of the game [Timeline](http://www.amazon.com/Timeline-Historical-Events-Card-Game/dp/2914849869/ref=pd_sim_21_1?ie=UTF8&dpID=51i4IfOEIaL&dpSrc=sims&preST=_AC_UL160_SR141%2C160_&refRID=1WXSN1GDK2BMAZ2WXTQ0).  
 It runs in tandem with its [companion Ember.js client](https://github.com/kagemusha/timeline)
 
+## Play the Game
+
+  You can [see this project in action here](https://timeline-game.firebaseapp.com/)
+
 ## Running the App
 
   1. Install Postgres
