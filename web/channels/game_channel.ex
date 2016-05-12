@@ -17,7 +17,7 @@ defmodule PhoenixTimeline.GameChannel do
             |> Game.start
 
     IO.puts "BRC: start-game"
-    broadcast! socket, "game-started", Game.next_turn(game.id, true)
+    broadcast! socket, "game-started", Game.next_turn(game.id, nil, true)
     {:reply, :ok, socket}
   end
 

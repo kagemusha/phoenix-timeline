@@ -60,10 +60,10 @@ defmodule PhoenixTimeline.Game do
 
     {:ok, game} = cast(game, game_updates, ~w(card_order player_order turn_count status timeline))
                   |> Repo.update
-    next_turn(game.id, correct)
+    next_turn(game.id, position, correct)
   end
 
-  def next_turn(game_id, correct_answer) do
+  def next_turn(game_id, position, correct_answer) do
     #update current_player with new cards_remaining
     #update game.current_player to be next
 
@@ -72,12 +72,11 @@ defmodule PhoenixTimeline.Game do
     current_player = current_player(game)
     current_card = get_card_at(game.card_order, game.turn_count)
 
-    last_card_json = nil
+    last_card = get_card_at(game.card_order, game.turn_count - 1)
+    last_card_json = %{card: %{id: last_card.id, event: last_card.event, year: last_card.year}}
+    last_player = player_at_turn(game, game.turn_count - 1)
     winnerId = nil
     if correct_answer do
-      last_card = get_card_at(game.card_order, game.turn_count - 1)
-      last_card_json = %{card: %{id: last_card.id, event: last_card.event, year: last_card.year}}
-      last_player = player_at_turn(game, game.turn_count - 1)
       if last_player.cards_remaining == 0 do
         winnerId = last_player.id
       end
@@ -85,6 +84,7 @@ defmodule PhoenixTimeline.Game do
 #      {:ok, turn} = Repo.update Turn.changeset(%{}, turn)
     end
     %{turn_count: game.turn_count,
+      position: position,
       correct: correct_answer,
       current_player: current_player.id,
       last_card: last_card_json,
