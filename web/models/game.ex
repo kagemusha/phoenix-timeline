@@ -98,8 +98,9 @@ defmodule PhoenixTimeline.Game do
   end
 
   defp player_at_turn(game, turn) do
-    player_index = rem(turn, Enum.count(game.players))
-    Enum.at(game.players, player_index)
+    index = rem(turn, Enum.count(game.players))
+    player_id = Enum.at(game.player_order, index)
+    Enum.find(game.players, fn(player)-> player.id == player_id end)
   end
 
   defp get_card_at(card_order, count) do
