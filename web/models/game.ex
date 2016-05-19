@@ -44,10 +44,10 @@ defmodule PhoenixTimeline.Game do
     if correct do
       new_timeline = List.insert_at game.timeline, position+1, card_year
       game_updates = Map.put game_updates, :timeline, new_timeline
-      current_player = current_player(game)
+      last_player = current_player(game)
 
-      player_updates = %{cards_remaining: (current_player.cards_remaining - 1) }
-      {:ok, current_player} = cast(current_player, player_updates, ~w(cards_remaining), [])
+      player_updates = %{cards_remaining: (last_player.cards_remaining - 1) }
+      {:ok, _} = cast(last_player, player_updates, ~w(cards_remaining), [])
                               |> Repo.update
     end
 
@@ -60,7 +60,7 @@ defmodule PhoenixTimeline.Game do
 
     game = game_with_players game_id
 
-    current_player = current_player(game)
+    next_player = current_player(game)
     current_card = get_card_at(game.card_order, game.turn_count)
 
     last_card = get_card_at(game.card_order, game.turn_count - 1)
@@ -75,7 +75,7 @@ defmodule PhoenixTimeline.Game do
     %{turn_count: game.turn_count,
       position: position,
       correct: correct_answer,
-      current_player: current_player.id,
+      current_player: next_player.id,
       last_card: last_card_json,
       current_card: %{card: %{id: current_card.id, event: current_card.event}},
       winner_id: winnerId
