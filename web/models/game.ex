@@ -18,13 +18,6 @@ defmodule PhoenixTimeline.Game do
     timestamps
   end
 
-  @required_fields ~w(code)
-
-  def changeset(model, params \\ :empty) do
-    model
-    |> cast(model, params, @required_fields)
-  end
-
   def start(game_id) do
     game = game_with_players(game_id)
     #limit card set for game at some point
@@ -38,7 +31,7 @@ defmodule PhoenixTimeline.Game do
                       status: "in-progress" }
 
     #some error handling later on
-    {:ok, game} = cast(game, game_updates, ~w(card_order player_order turn_count status timeline))
+    {:ok, game} = cast(game, game_updates, ~w(card_order player_order turn_count status timeline), [])
                   |> Repo.update
     game
   end
@@ -54,11 +47,11 @@ defmodule PhoenixTimeline.Game do
       current_player = current_player(game)
 
       player_updates = %{cards_remaining: (current_player.cards_remaining - 1) }
-      {:ok, current_player} = cast(current_player, player_updates, ~w(cards_remaining))
+      {:ok, current_player} = cast(current_player, player_updates, ~w(cards_remaining), [])
                               |> Repo.update
     end
 
-    {:ok, game} = cast(game, game_updates, ~w(card_order player_order turn_count status timeline))
+    {:ok, game} = cast(game, game_updates, ~w(card_order player_order turn_count status timeline), [])
                   |> Repo.update
     next_turn(game.id, position, correct)
   end

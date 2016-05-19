@@ -5,12 +5,12 @@ defmodule PhoenixTimeline.GameChannel do
   alias PhoenixTimeline.Game
   alias PhoenixTimeline.Api.GameView
 
-  def join("game:" <> game_id, params, socket) do
+  def join("game:" <> game_id, _params, socket) do
     send self, {:after_join, %{game_id: game_id}}
     {:ok, socket}
   end
 
-  def handle_in("start-game", params, socket) do
+  def handle_in("start-game", _params, socket) do
     IO.puts "MESSAGE: start-game"
     # check if game already started
     game = socket.assigns.game_id
@@ -29,7 +29,7 @@ defmodule PhoenixTimeline.GameChannel do
     {:reply, :ok, socket}
   end
 
-  def handle_in(event, params, socket) do
+  def handle_in(event, _params, socket) do
     IO.puts "MESSAGE RECEIVED event: #{event}"
     {:reply, :ok, socket}
   end
