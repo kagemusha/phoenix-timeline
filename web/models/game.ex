@@ -64,8 +64,6 @@ defmodule PhoenixTimeline.Game do
   end
 
   def next_turn(game_id, position, correct_answer) do
-    #update current_player with new cards_remaining
-    #update game.current_player to be next
 
     game = game_with_players game_id
 
@@ -80,8 +78,6 @@ defmodule PhoenixTimeline.Game do
       if last_player.cards_remaining == 0 do
         winnerId = last_player.id
       end
-#      turn = %{game_id: game.id, card_id: last_card.id}
-#      {:ok, turn} = Repo.update Turn.changeset(%{}, turn)
     end
     %{turn_count: game.turn_count,
       position: position,
