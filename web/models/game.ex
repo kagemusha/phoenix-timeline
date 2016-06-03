@@ -8,10 +8,10 @@ defmodule PhoenixTimeline.Game do
   schema "games" do
     field :name, :string
     field :code, :string
-    field :status, :string
+    field :status, :string, default: "waiting-to-start"
     field :initial_card_count, :integer
     field :card_order, {:array, :integer}
-    field :turn_count, :integer
+    field :turn_count, :integer, default: 0
     field :player_order, {:array, :integer}
     field :timeline, {:array, :integer}
     has_many :players, Player

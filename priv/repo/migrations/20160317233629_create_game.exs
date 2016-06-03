@@ -5,7 +5,7 @@ defmodule PhoenixTimeline.Repo.Migrations.CreateGame do
     create table(:games) do
       add :name, :string
       add :code, :string, null: false
-      add :status, :string, default: "waiting-to-start"
+      add :status, :string
       add :initial_card_count, :integer
       add :card_order, {:array, :integer}
       add :player_order, {:array, :integer}
