@@ -17,7 +17,8 @@ defmodule PhoenixTimeline.Api.PlayerView do
       game: [%{
         id: game.id,
         name: game.name,
-        code: game.code
+        code: game.code,
+        status: game.status
       }]
     }
   end

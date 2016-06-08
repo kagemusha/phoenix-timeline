@@ -17,8 +17,17 @@ defmodule PhoenixTimeline.GameChannel do
             |> Game.start
 
     IO.puts "BRC: start-game"
-    broadcast! socket, "game-started", Game.next_turn(game.id, nil, true)
+    broadcast! socket, "game-started", Game.first_turn(game)
     {:reply, :ok, socket}
+  end
+
+  def handle_in("get-game-state", params, socket) do
+    game_id = socket.assigns.game_id
+    IO.puts "get-game-state: game #{game_id}"
+    game_state = Game.get_state(game_id)
+    IO.inspect game_state
+    push socket, "game-state", game_state
+    {:noreply, socket}
   end
 
   def handle_in("place-card", params, socket) do

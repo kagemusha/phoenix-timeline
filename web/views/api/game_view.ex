@@ -7,6 +7,7 @@ defmodule PhoenixTimeline.Api.GameView do
       %{
         id: game.id,
         code: game.code,
+        status: game.status,
         players: [%{
                     id: player.id,
                     token: player.token,
