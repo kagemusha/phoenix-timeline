@@ -12,10 +12,11 @@ defmodule PhoenixTimeline.Api.GameController do
   end
 
   def create(conn, %{
-        "game" => %{"code" => code, "initial_card_count" => initial_card_count, "players" => [%{"game" => nil, "name" => player_name}]}
+        "game" => %{"code" => code, "initial_card_count" => card_count, "players" => [%{"game" => nil, "name" => player_name}]}
       }) do
 
-    game_params = %Game{code: code, initial_card_count: String.to_integer(initial_card_count)}
+    if is_binary(card_count), do: card_count = String.to_integer(card_count)
+    game_params = %Game{code: code, initial_card_count: card_count}
     game = Repo.insert!(game_params)             #create game with player as creator
 
     Player.create(conn, game, player_name, true)
