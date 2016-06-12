@@ -32,8 +32,10 @@ defmodule PhoenixTimeline.ChannelCase do
   end
 
   setup tags do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(PhoenixTimeline.Repo)
+
     unless tags[:async] do
-      Ecto.Adapters.SQL.restart_test_transaction(PhoenixTimeline.Repo, [])
+      Ecto.Adapters.SQL.Sandbox.mode(PhoenixTimeline.Repo, {:shared, self()})
     end
 
     :ok
