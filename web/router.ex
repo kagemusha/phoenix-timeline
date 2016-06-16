@@ -26,5 +26,6 @@ defmodule PhoenixTimeline.Router do
     resources "/games", Api.GameController, except: [:new, :edit]
     resources "/players", Api.PlayerController, except: [:new, :edit]
     resources "/cards", Api.CardController, except: [:new, :edit]
+    resources "/cardsets", Api.CardsetController, only: [:index]
    end
 end

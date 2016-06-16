@@ -9,86 +9,120 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
-alias PhoenixTimeline.Repo
-alias PhoenixTimeline.Card
 
-cards = [
-#  ["Humans cross the Bering Straits into the Americas", -15000],
-#    ["Domestication of plants and animals", -12500],
-#    ["Beginning of irrigation in Egypt and Mesopotamia", -6000],
-#    ["Hammurabi becomes king of Babylon", -1792],
-#    ["Solomon becomes king of Israel", -970],
-#    ["Founding of Carthage", -813],
-#    ["First recorded Olympic Games", -776],
-#    ["Nebuchadnezzar II of Babylon conquers Judah", -586],
-#    ["Cyrus the Great conquers Babylon", -538],
-#    ["Athenians defeat Persians at Battle of Marathon", -490],
-#    ["300 Spartans overrun at Thermopylae", -480],
-#    ["Parthenon completed in Athens", -432],
-#    ["Athens surrenders to Sparta to end Peloponnesian War", -404],
-#    ["Alexander becomes King of Macedon", -336],
-#    ["Alexander decisively defeats Persians at Gaugamela", -331],
-#    ["Death of Alexander the Great", -323],
-#    ["Qin Shi Huang unifies China, declares himself first Emperor", -220],
-#    ["Liu Bang found Chinese Han Dynasty", -206],
-#    ["Henry VIII executes Ann Boleyn", -206],
-#    ["Destruction of Carthage", -146],
-#    ["Caesar crosses the Rubicon", -49],
-#    ["Assassination of Caesar", -44],
-#    ["Death of Cleopatra", -30],
-#    ["Start of First Jewish-Roman War", 66],
-#    ["First Goth raid on the Roman Empire", 238],
-#    ["Vandals sack Rome", 455],
-#    ["Charlemagne crowned Holy Roman Emperor", 800],
-#    ["Norman Invasion", 1066],
-#    ["First Crusade launched", 1096],
-#    ["Magna Carta", 1215],
-#    ["Mongol Yuan Dynasty declared in China", 1271],
-#    ["First Mongol invasion of Japan", 1274],
-#    ["Onset of the Black Death in Europe", 1348],
-#    ["Advent of the Ming Dynasty in China", 1368],
-#    ["Invention of the Printing Press", 1440],
-#    ["Fall of Constatinople to the Turks", 1453],
-#    ["Columbus discovers Americas", 1492],
-#    ["Luther's 95 Theses ushers in the Protestant Reformation", 1517],
-#    ["First circumnavigation of the world", 1522],
-#    ["Battle of Panipat marks start of Mughal Empire in India", 1526],
-#    ["Suleiman the Magnificent besieges Vienna", 1529],
-#    ["Charles V crowned Holy Roman Emperor", 1530],
-#    ["Spanish Armada", 1588],
-#    ["Battle of Sekigahara assures Tokugawa supremacy in Japan", 1600],
-#    ["Dutch purchase Manhattan", 1626],
-#    ["Newton publishes law of gravitation", 1687],
-#    ["US Declaration of Independence", 1776],
-#    ["Storming of the Bastille", 1789],
-#    ["Burr kills Hamilton in duel", 1804],
-#    ["Napoleon crowned Emperor", 1804],
-#    ["Battle of Austerlitz", 1805],
-#    ["Nelson defeats French at Trafalgar", 1805],
-#    ["Napoleon invades Russia", 1812],
-#    ["Battle of Waterloo", 1815],
-#    ["Venezuela under Bolivar achieves independence", 1821],
-#    ["Piggery Wars drive hogs out of Manhattan", 1859],
-#    ["Battle of Fort Sumter starts of US Civil War", 1861],
-#    ["Invention of the telephone", 1876],
-#    ["New Zealand first country to allow women to vote", 1893],
-#    ["First flight", 1903],
-#    ["Russo-Japanese War ends in Russian defeat", 1905],
-#    ["Einstein announces theory of relativity", 1905],
-#    ["Sinking of the Titanic", 1913],
-#    ["Outbreak of WWI", 1914],
-#    ["Archduke Franz Ferdinand assassinated in Sarajevo", 1914],
-#    ["Russian Revolution", 1917],
-#    ["Discovery of Penicillin", 1928],
-#    ["Black Thursday ushers in the Great Depression", 1929],
-#    ["World War II begins with German invasion of Poland", 1939],
-#    ["India and Pakistan gain independence from Britain", 1947],
-#    ["Communist Takeover of China", 1949],
-#    ["Sputnik launch, first man-made satellite to orbit earth", 1957],
-#    ["Yuri Gagarin becomes first human in outer space", 1961],
-#    ["First Moon Landing", 1969],
-#    ["Nelson Mandela released from prison", 1990],
-#    ["Louisiana Purchase", 1803],
+defmodule Seeds do
+  import Ecto.Query, only: [from: 1, from: 2]
+  alias PhoenixTimeline.Repo
+  alias PhoenixTimeline.Card
+  alias PhoenixTimeline.Game
+  alias PhoenixTimeline.Cardset
+
+  def add_cardset(name, display_name, description, cards) do
+
+    cardset = Repo.insert!(%Cardset{name: name, display_name: display_name, description: description})
+
+    for card_attrs <- cards do
+      card_struct = case card_attrs do
+         [event, year] -> %Card{ event: event, year: year }
+         [event, year, month] -> %Card{ event: event, year: year, month: month }
+      end
+
+      card = Repo.insert! card_struct
+             |> Repo.preload(:cardsets)
+
+      card
+      |> Ecto.Changeset.change
+      |> Ecto.Changeset.put_assoc(:cardsets, [ cardset ])
+      |> Repo.update!
+    end
+  end
+
+  def cleanup do
+    from(g in Game) |> Repo.delete_all
+    from(c in Card) |> Repo.delete_all
+    from(cs in Cardset) |> Repo.delete_all
+  end
+end
+
+Seeds.cleanup
+
+general_cards = [
+  ["Humans cross the Bering Straits into the Americas", -15000],
+    ["Domestication of plants and animals", -12500],
+    ["Beginning of irrigation in Egypt and Mesopotamia", -6000],
+    ["Hammurabi becomes king of Babylon", -1792],
+    ["Solomon becomes king of Israel", -970],
+    ["Founding of Carthage", -813],
+    ["First recorded Olympic Games", -776],
+    ["Nebuchadnezzar II of Babylon conquers Judah", -586],
+    ["Cyrus the Great conquers Babylon", -538],
+    ["Athenians defeat Persians at Battle of Marathon", -490],
+    ["300 Spartans overrun at Thermopylae", -480],
+    ["Parthenon completed in Athens", -432],
+    ["Athens surrenders to Sparta to end Peloponnesian War", -404],
+    ["Alexander becomes King of Macedon", -336],
+    ["Alexander decisively defeats Persians at Gaugamela", -331],
+    ["Death of Alexander the Great", -323],
+    ["Qin Shi Huang unifies China, declares himself first Emperor", -220],
+    ["Liu Bang found Chinese Han Dynasty", -206],
+    ["Henry VIII executes Ann Boleyn", -206],
+    ["Destruction of Carthage", -146],
+    ["Caesar crosses the Rubicon", -49],
+    ["Assassination of Caesar", -44],
+    ["Death of Cleopatra", -30],
+    ["Start of First Jewish-Roman War", 66],
+    ["First Goth raid on the Roman Empire", 238],
+    ["Vandals sack Rome", 455],
+    ["Charlemagne crowned Holy Roman Emperor", 800],
+    ["Norman Invasion", 1066],
+    ["First Crusade launched", 1096],
+    ["Magna Carta", 1215],
+    ["Mongol Yuan Dynasty declared in China", 1271],
+    ["First Mongol invasion of Japan", 1274],
+    ["Onset of the Black Death in Europe", 1348],
+    ["Advent of the Ming Dynasty in China", 1368],
+    ["Invention of the Printing Press", 1440],
+    ["Fall of Constatinople to the Turks", 1453],
+    ["Columbus discovers Americas", 1492],
+    ["Luther's 95 Theses ushers in the Protestant Reformation", 1517],
+    ["First circumnavigation of the world", 1522],
+    ["Battle of Panipat marks start of Mughal Empire in India", 1526],
+    ["Suleiman the Magnificent besieges Vienna", 1529],
+    ["Charles V crowned Holy Roman Emperor", 1530],
+    ["Spanish Armada", 1588],
+    ["Battle of Sekigahara assures Tokugawa supremacy in Japan", 1600],
+    ["Dutch purchase Manhattan", 1626],
+    ["Newton publishes law of gravitation", 1687],
+    ["US Declaration of Independence", 1776],
+    ["Storming of the Bastille", 1789],
+    ["Burr kills Hamilton in duel", 1804],
+    ["Napoleon crowned Emperor", 1804],
+    ["Battle of Austerlitz", 1805],
+    ["Nelson defeats French at Trafalgar", 1805],
+    ["Napoleon invades Russia", 1812],
+    ["Battle of Waterloo", 1815],
+    ["Venezuela under Bolivar achieves independence", 1821],
+    ["Piggery Wars drive hogs out of Manhattan", 1859],
+    ["Battle of Fort Sumter starts of US Civil War", 1861],
+    ["Invention of the telephone", 1876],
+    ["New Zealand first country to allow women to vote", 1893],
+    ["First flight", 1903],
+    ["Russo-Japanese War ends in Russian defeat", 1905],
+    ["Einstein announces theory of relativity", 1905],
+    ["Sinking of the Titanic", 1913],
+    ["Outbreak of WWI", 1914],
+    ["Archduke Franz Ferdinand assassinated in Sarajevo", 1914],
+    ["Russian Revolution", 1917],
+    ["Discovery of Penicillin", 1928],
+    ["Black Thursday ushers in the Great Depression", 1929],
+    ["World War II begins with German invasion of Poland", 1939],
+    ["India and Pakistan gain independence from Britain", 1947],
+    ["Communist Takeover of China", 1949],
+    ["Sputnik launch, first man-made satellite to orbit earth", 1957],
+    ["Yuri Gagarin becomes first human in outer space", 1961],
+    ["First Moon Landing", 1969],
+    ["Nelson Mandela released from prison", 1990],
+    ["Louisiana Purchase", 1803],
     ["US purchases Alaska from Russia",1867],
     ["Vesuvius eruption buries Pompeii", 79],
     ["Visigoths sack Rome", 410],
@@ -166,8 +200,26 @@ cards = [
     ["Muhammad embarks on the Hijra", 622]
   ]
 
-for card <- cards do
-  [event, year] = card
-  IO.puts "Event: #{event} year: #{year}"
-  Repo.insert!(%Card{event: event, year: year})
-end
+
+
+peep_cards = [
+  ["First Ember.js NYC meetup", 2012, 3],
+  ["First Sproutcore NYC meetup", 2011, 1],
+  ["Ember app kit", 2013, 5],
+  ["Ember-cli", 2013, 10],
+  ["Advent of Ember", 2011 , 11],
+  ["Fastboot announced", 2014, 11],
+#  ["Ember.js 1.0", ,],
+#  ["Stable Ember data", ,],
+#  ["First new Ember router", ,],
+#  ["Second new Ember router", ,],
+#  ["HTMLBars finished", ,],
+#  ["Ember inspector appears", ,],
+#  ["Ember is slow crisis!", ,],
+#  ["Emblem.js", ,],
+#  ["First Ember Conf", ,],
+#  ["", ,],
+]
+
+Seeds.add_cardset "general", "General history", "General historical events", general_cards
+Seeds.add_cardset "peep", "Peep stack", "Peep stack (phoenix, elixir, ember, postgres) related events", peep_cards

@@ -1,7 +1,9 @@
 defmodule PhoenixTimeline.Card do
   use PhoenixTimeline.Web, :model
+  alias PhoenixTimeline.Cardset
 
   schema "cards" do
+    many_to_many :cardsets, Cardset, join_through: "cardsets_cards"
     field :event, :string
     field :year, :integer
 

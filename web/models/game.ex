@@ -4,8 +4,11 @@ defmodule PhoenixTimeline.Game do
   alias PhoenixTimeline.Game
   alias PhoenixTimeline.Player
   alias PhoenixTimeline.Card
+  alias PhoenixTimeline.Cardset
 
   schema "games" do
+    has_many :players, Player
+    belongs_to :cardset, Cardset
     field :name, :string
     field :code, :string
     field :status, :string, default: "waiting-to-start"
@@ -17,14 +20,15 @@ defmodule PhoenixTimeline.Game do
     field :last_result, :boolean
     field :timeline, {:array, :integer}
     field :winner_id, :integer
-    has_many :players, Player
+
     timestamps
   end
 
   def start(game_id) do
     game = game_with_players(game_id)
     #limit card set for game at some point
-    shuffled_card_ids = get_shuffled_ids Repo.all(Card)
+    game = Repo.preload game, cardset: :cards
+    shuffled_card_ids = get_shuffled_ids game.cardset.cards
     shuffled_player_ids = get_shuffled_ids game.players
 
     game_updates = %{card_order: shuffled_card_ids,
