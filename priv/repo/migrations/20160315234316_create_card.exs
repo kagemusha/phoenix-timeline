@@ -5,6 +5,7 @@ defmodule PhoenixTimeline.Repo.Migrations.CreateCard do
     create table(:cards) do
       add :event, :string
       add :year, :integer
+      add :month, :integer
 
       timestamps
     end

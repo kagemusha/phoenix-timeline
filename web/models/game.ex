@@ -101,7 +101,7 @@ defmodule PhoenixTimeline.Game do
 
         #get cards
         timeline_cards = Repo.all(from c in Card, where: c.id in ^game.timeline)
-        cards_json = Enum.map timeline_cards, &(%{id: &1.id, event: &1.event, year: &1.year})
+        cards_json = Enum.map timeline_cards, &(%{id: &1.id, event: &1.event, year: &1.year, month: &1.month})
 
         current_card_json = %{id: current_card.id, event: current_card.event}
         cards_json = cards_json ++ [ current_card_json ]
@@ -109,7 +109,7 @@ defmodule PhoenixTimeline.Game do
         last_card = get_card_at(game.card_order, game.turn_count - 1)
         if !game.last_result do
           #card won't be on timeline so must include
-          cards_json = cards_json ++ [ %{id: last_card.id, event: last_card.event, year: last_card.year} ]
+          cards_json = cards_json ++ [ %{id: last_card.id, event: last_card.event, year: last_card.year, month: last_card.month} ]
         end
 
         additional_game_state = %{
@@ -137,7 +137,7 @@ defmodule PhoenixTimeline.Game do
               status: game.status,
               timeline: game.timeline,
               cards: [
-                %{id: first_card.id, event: first_card.event, year: first_card.year},
+                %{id: first_card.id, event: first_card.event, year: first_card.year, month: first_card.month},
                 %{id: current_card.id, event: current_card.event}
               ],
               current_card_id: current_card.id,
@@ -153,19 +153,18 @@ defmodule PhoenixTimeline.Game do
 
   def placement_correct(game, position) do
     current_card = get_card_at(game.card_order, game.turn_count)
-    card_year = current_card.year
+    current_card_time = Card.time_val(current_card)
     timeline = game.timeline
     end_position = Enum.count(timeline) - 1
     correct = case position do
       -1 ->
-        card_year <= timelineYear(timeline, 0)
+        current_card_time <= Card.time_val(timeline_card_at(timeline, 0))
       ^end_position ->
-        IO.puts "endPos: #{end_position}, year: #{card_year}"
-        card_year >= timelineYear(timeline, end_position)
+        current_card_time >= Card.time_val(timeline_card_at(timeline, end_position))
       _ ->
-        IO.puts "----"
-        correct = card_year >= timelineYear(timeline, position) &&
-                  card_year <= timelineYear(timeline, position + 1)
+        before_card_time = Card.time_val(timeline_card_at(timeline, position))
+        after_card_time = Card.time_val(timeline_card_at(timeline, position+1))
+        before_card_time <= current_card_time && current_card_time <= after_card_time
     end
     {correct, current_card.id}
   end
@@ -192,8 +191,9 @@ defmodule PhoenixTimeline.Game do
     |> Repo.preload(:players)
   end
 
-  defp timelineYear(timeline, position) do
+  defp timeline_card_at(timeline, position) do
     card_id = Enum.at(timeline, position)
-    Repo.get(Card, card_id).year
+    Repo.get(Card, card_id)
   end
+
 end
