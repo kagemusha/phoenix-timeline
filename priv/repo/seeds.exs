@@ -178,7 +178,7 @@ general_cards = [
     ["Galileo discovers Saturn, a planet with ears", 1610],
     ["Darwin publishes theory of evolution", 1859],
     ["I think therefore I am", 1637],
-    ["Triange Factory Fire in New York City", 1911],
+    ["Triangle Factory Fire in New York City", 1911],
     ["Al Capone arrested for tax evasion", 1931],
     ["Prohibition enacted", 1920],
     ["Henry IV crowned King of France after converting to Catholicism", 1594],
