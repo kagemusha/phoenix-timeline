@@ -209,7 +209,9 @@ peep_cards = [
   ["Ember-cli", 2013, 10],
   ["Advent of Ember", 2011 , 11],
   ["Fastboot announced", 2014, 11],
-#  ["Ember.js 1.0", ,],
+  ["Ember.js 1.0 released", 2013, 7],
+  ["Glimmer lands", 2015, 5],
+
 #  ["Stable Ember data", ,],
 #  ["First new Ember router", ,],
 #  ["Second new Ember router", ,],
