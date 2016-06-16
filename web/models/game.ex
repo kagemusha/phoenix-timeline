@@ -1,10 +1,12 @@
 defmodule PhoenixTimeline.Game do
   use PhoenixTimeline.Web, :model
+  alias Phoenix.View
   alias PhoenixTimeline.Repo
   alias PhoenixTimeline.Game
   alias PhoenixTimeline.Player
   alias PhoenixTimeline.Card
   alias PhoenixTimeline.Cardset
+  alias PhoenixTimeline.Api.CardView
 
   schema "games" do
     has_many :players, Player
@@ -101,15 +103,15 @@ defmodule PhoenixTimeline.Game do
 
         #get cards
         timeline_cards = Repo.all(from c in Card, where: c.id in ^game.timeline)
-        cards_json = Enum.map timeline_cards, &(%{id: &1.id, event: &1.event, year: &1.year, month: &1.month})
+        cards_json = View.render(CardView, "cards_with_date.json", %{cards: timeline_cards})
 
-        current_card_json = %{id: current_card.id, event: current_card.event}
+        current_card_json = View.render(CardView, "card_no_date.json", %{card: current_card})
         cards_json = cards_json ++ [ current_card_json ]
 
         last_card = get_card_at(game.card_order, game.turn_count - 1)
         if !game.last_result do
           #card won't be on timeline so must include
-          cards_json = cards_json ++ [ %{id: last_card.id, event: last_card.event, year: last_card.year, month: last_card.month} ]
+          cards_json = cards_json ++ [ View.render(CardView, "card_with_date.json", %{card: last_card}) ]
         end
 
         additional_game_state = %{
@@ -137,8 +139,8 @@ defmodule PhoenixTimeline.Game do
               status: game.status,
               timeline: game.timeline,
               cards: [
-                %{id: first_card.id, event: first_card.event, year: first_card.year, month: first_card.month},
-                %{id: current_card.id, event: current_card.event}
+                View.render(CardView, "card_with_date.json", %{card: first_card}),
+                View.render(CardView, "card_no_date.json", %{card: current_card}),
               ],
               current_card_id: current_card.id,
               current_player_id: next_player.id,
