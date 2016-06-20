@@ -201,7 +201,6 @@ general_cards = [
   ]
 
 
-
 peep_cards = [
   ["First Ember.js NYC meetup", 2012, 3],
   ["First Sproutcore NYC meetup", 2011, 1],
@@ -211,16 +210,17 @@ peep_cards = [
   ["Fastboot announced", 2014, 11],
   ["Ember.js 1.0 released", 2013, 7],
   ["Glimmer lands", 2015, 5],
-
+  ["First Ember Conf", 2014, 2],
+  ["Brian Cardarella talks Phoenix at Ember NYC", 2015, 12],
+  ["Javascript appears", 1995, 4],
+  ["Erlang appears", 1986, 6],
+  ["Jose Valim starts work on Elixir", 2011, 0],
+#  ["Ember NYC Mascot!", ],
 #  ["Stable Ember data", ,],
 #  ["First new Ember router", ,],
 #  ["Second new Ember router", ,],
-#  ["HTMLBars finished", ,],
 #  ["Ember inspector appears", ,],
 #  ["Ember is slow crisis!", ,],
-#  ["Emblem.js", ,],
-#  ["First Ember Conf", ,],
-#  ["", ,],
 ]
 
 Seeds.add_cardset "general", "General history", "General historical events", general_cards
