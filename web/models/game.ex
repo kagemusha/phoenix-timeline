@@ -21,7 +21,7 @@ defmodule PhoenixTimeline.Game do
     field :last_placement, :integer
     field :last_result, :boolean
     field :timeline, {:array, :integer}
-    field :winner_id, :integer
+    field :winner_ids, {:array, :integer}
 
     timestamps
   end
@@ -53,6 +53,7 @@ defmodule PhoenixTimeline.Game do
     game_updates = %{ turn_count: game.turn_count + 1,
                       last_placement: position,
                       last_result: correct }
+
     if correct do
       new_timeline = List.insert_at game.timeline, position+1, card_id
       game_updates = Map.put game_updates, :timeline, new_timeline
@@ -60,13 +61,24 @@ defmodule PhoenixTimeline.Game do
       last_player = current_player(game)
       player_cards_remaining = last_player.cards_remaining - 1
       if player_cards_remaining == 0 do
-        game_updates = Map.merge(game_updates, %{ status: "complete", winner_id: last_player.id})
+        game_updates = Map.merge(game_updates, %{ status: "complete", winner_ids: [last_player.id]})
       end
+
       player_updates = %{cards_remaining: player_cards_remaining}
       {:ok, last_player} = cast(last_player, player_updates, ~w(cards_remaining), [])
                               |> Repo.update
     end
-    {:ok, game} = cast(game, game_updates, ~w(card_order player_order turn_count status timeline last_placement last_result ), ~w(winner_id) )
+
+    if (game.turn_count + 1) == Enum.count(game.card_order) and (game_updates != %{status: "complete"}) do
+      #we have run out of cards so declare person(s) with fewest cards the winner(s)
+      winner_ids = Repo.all from player in Player,
+                  where: [game_id: ^game.id],
+                  where: fragment("cards_remaining IN (SELECT MIN(cards_remaining) from players where game_id = ?)", ^game.id),
+                  select: player.id
+      game_updates = Map.merge(game_updates, %{ status: "complete", winner_ids: winner_ids})
+    end
+
+    {:ok, game} = cast(game, game_updates, ~w(card_order player_order turn_count status timeline last_placement last_result ), ~w(winner_ids) )
                   |> Repo.update
     get_state game.id
   end
@@ -99,18 +111,22 @@ defmodule PhoenixTimeline.Game do
 
         last_player = player_at_turn game, game.turn_count - 1
         next_player = player_at_turn game, game.turn_count
-        current_card = get_card_at(game.card_order, game.turn_count)
 
         #get cards
         timeline_cards = Repo.all(from c in Card, where: c.id in ^game.timeline)
         cards_json = View.render(CardView, "cards_with_date.json", %{cards: timeline_cards})
 
-        current_card_json = View.render(CardView, "card_no_date.json", %{card: current_card})
-        cards_json = cards_json ++ [ current_card_json ]
+        current_card = nil
+        if game.turn_count < Enum.count game.card_order do
+          current_card = get_card_at(game.card_order, game.turn_count)
+          current_card_json = View.render(CardView, "card_no_date.json", %{card: current_card})
+          cards_json = cards_json ++ [ current_card_json ]
+        end
 
         last_card = get_card_at(game.card_order, game.turn_count - 1)
         if !game.last_result do
-          #card won't be on timeline so must include
+          # card won't be on timeline, since answer wrong, but must include to show result
+          # (will have been sent on previous turn, but if a refresh, needs inclusion
           cards_json = cards_json ++ [ View.render(CardView, "card_with_date.json", %{card: last_card}) ]
         end
 
@@ -120,9 +136,9 @@ defmodule PhoenixTimeline.Game do
           last_player_id: last_player.id,
           last_placement: game.last_placement,
           last_result: game.last_result,
-          current_card_id: current_card.id,
+          current_card_id: (if current_card, do: current_card.id, else: nil),
           current_player_id: next_player.id,
-          winner_id: game.winner_id
+          winner_ids: game.winner_ids
         }
         Map.merge(game_state, additional_game_state)
     end
@@ -179,7 +195,11 @@ defmodule PhoenixTimeline.Game do
 
   defp get_card_at(card_order, index) do
     card_id = Enum.at(card_order, index)
-    Repo.get Card, card_id
+    case card_id  do
+       nil -> nil
+       id -> Repo.get Card, id
+    end
+
   end
 
   defp get_shuffled_ids(object_list) do

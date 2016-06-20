@@ -5,7 +5,7 @@ defmodule PhoenixTimeline.Repo.Migrations.CreateGame do
     create table(:games) do
       add :cardset_id, references(:cardsets, on_delete: :nothing)
       add :creator_id, :integer
-      add :winner_id, :integer
+      add :winner_ids, {:array, :integer}
       add :name, :string
       add :code, :string, null: false
       add :status, :string
