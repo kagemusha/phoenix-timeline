@@ -21,7 +21,7 @@ defmodule PhoenixTimeline.GameChannel do
     {:reply, :ok, socket}
   end
 
-  def handle_in("get-game-state", params, socket) do
+  def handle_in("get-game-state", _, socket) do
     game_id = socket.assigns.game_id
     IO.puts "get-game-state: game #{game_id}"
     game_state = Game.get_state(game_id)
