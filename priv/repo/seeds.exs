@@ -44,6 +44,8 @@ defmodule Seeds do
   end
 end
 
+IO.puts "Seeding...."
+
 Seeds.cleanup
 
 general_cards = [

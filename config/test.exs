@@ -16,4 +16,5 @@ config :phoenix_timeline, PhoenixTimeline.Repo,
   password: "postgres",
   database: "phoenix_timeline_test",
   hostname: "localhost",
+  #ownership_timeout: 300_000, #useful when PRYing
   pool: Ecto.Adapters.SQL.Sandbox
