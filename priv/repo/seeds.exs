@@ -215,7 +215,7 @@ peep_cards = [
   ["First Ember Conf", 2014, 2],
   ["Jo Liss releases broccoli.js", 2014, 1],
   ["Martin Muñoz => 5th #peepswhoundstandEMetal .com", 2014, 8],
-  ["Brian Cardarella talks Phoenix at Ember NYC", 2015, 12],
+  ["Brian Cardarella talks Phoenix at Ember NYC", 2015, 11],
   ["Javascript appears", 1995, 4],
   ["Erlang appears", 1986, 6],
   ["Jose Valim starts work on Elixir", 2011, 0],
