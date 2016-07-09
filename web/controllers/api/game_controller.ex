@@ -19,8 +19,9 @@ defmodule PhoenixTimeline.Api.GameController do
                     "players" => [%{"game" => nil, "name" => player_name}]}
       }) do
 
-    if is_binary(card_count), do: card_count = String.to_integer(card_count)
-    if is_binary(cardset_id), do: cardset_id = String.to_integer(cardset_id)
+    card_count = ensure_int(card_count)
+    cardset_id = ensure_int(cardset_id)
+
     game_params = %Game{code: code, initial_card_count: card_count}
     game = Repo.insert!(game_params)
 
@@ -44,5 +45,12 @@ defmodule PhoenixTimeline.Api.GameController do
     Repo.delete!(game)
 
     send_resp(conn, :no_content, "")
+  end
+
+  defp ensure_int(intOrString) do
+      case is_binary(intOrString) do
+        true  -> String.to_integer(intOrString)
+        false -> intOrString
+      end
   end
 end
