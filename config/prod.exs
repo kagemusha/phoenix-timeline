@@ -71,3 +71,10 @@ config :logger, level: :info
 # Finally import the config/prod.secret.exs
 # which should be versioned separately.
 #import_config "prod.secret.exs"
+
+config :quantum, cron: [
+    "0 * * * *": {Mix.Tasks.PhoenixTimeline.CullOldGames, :cull }
+]
+
+config :phoenix_timeline, :cull_all_games_after, %{amount: 3, unit: "day" }
+config :phoenix_timeline, :cull_complete_games_after, %{amount: 2, unit: "day", }

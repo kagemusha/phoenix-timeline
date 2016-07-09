@@ -40,3 +40,11 @@ config :phoenix_timeline, PhoenixTimeline.Repo,
   database: "phoenix_timeline_dev",
   hostname: "localhost",
   pool_size: 10
+
+config :quantum, cron: [
+    # Every minute
+    "* * * * *": {Mix.Tasks.PhoenixTimeline.CullOldGames, :cull }
+]
+
+config :phoenix_timeline, :cull_all_games_after, %{amount: 5, unit: "minute" }
+config :phoenix_timeline, :cull_complete_games_after, %{amount: 2, unit: "minute", }
