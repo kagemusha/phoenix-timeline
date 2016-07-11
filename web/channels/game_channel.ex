@@ -22,6 +22,7 @@ defmodule PhoenixTimeline.GameChannel do
   end
 
   def handle_in("get-game-state", _, socket) do
+    IO.puts "get-game-state"
     game_id = socket.assigns.game_id
     IO.puts "get-game-state: game #{game_id}"
     game_state = Game.get_state(game_id)
@@ -44,13 +45,18 @@ defmodule PhoenixTimeline.GameChannel do
   end
 
   def handle_info({:after_join, %{game_id: game_id}}, socket) do
+    IO.puts "handle_info"
     game_id = String.to_integer(game_id)
-    game = Repo.get!(Game, game_id)
-    socket = assign(socket, :game_id, game_id)
-    players = View.render(GameView, "players.json", %{game: game} )
-    IO.puts "BRC: added-player"
-    broadcast! socket, "added-player", players
-    {:noreply, socket}
+    case  Repo.get(Game, game_id) do
+      nil ->
+        {:stop, "Game no longer exists",  socket}
+      game ->
+        socket = assign(socket, :game_id, game_id)
+        players = View.render(GameView, "players.json", %{game: game} )
+        IO.puts "BRC: added-player"
+        broadcast! socket, "added-player", players
+        {:noreply, socket}
+    end
   end
 
 end
