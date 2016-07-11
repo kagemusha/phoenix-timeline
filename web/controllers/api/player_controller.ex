@@ -6,10 +6,16 @@ defmodule PhoenixTimeline.Api.PlayerController do
 
   #plug :scrub_params, "game" when action in [:create, :update]
   def index(conn, %{"token"=> token}) do
-    player = Repo.get_by( Player, token: token)
-             |> Repo.preload(:game)
-    conn
-    |> render("player_with_game.json", %{player: player})
+    case Repo.get_by( Player, token: token) do
+      nil ->
+        conn
+        |> put_resp_content_type("application/json")
+        |> send_resp(410, "game.no.longer.exists")
+      player ->
+        player = Repo.preload(player, :game)
+        conn
+        |> render("player_with_game.json", %{player: player})
+    end
   end
 
   def create(conn, %{ "player" => %{"name" => name, "game_code" => game_code} }) do
